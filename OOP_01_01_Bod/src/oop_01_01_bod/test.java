@@ -12,6 +12,7 @@ public class test {
         System.out.println(myPoint); //volá toString
         System.out.println(myPoint2.distanceFromOrigin());
         System.out.println(myPoint2.distanceFrom(myPoint));
+        //kok
     }
     
 }
