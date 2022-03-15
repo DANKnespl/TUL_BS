@@ -59,10 +59,9 @@ public class Bus {
     }
     
     public void inPassengers(int passengers){
-        int tmp=this.passengers+passengers;
-        if (tmp>seats){
+        if (passengers>seats-this.passengers){
+            System.out.println("Nastoupit mohlo jen "+(seats-this.passengers));
             this.passengers=seats;
-            System.out.println("Nastoupit mohlo jen "+(tmp-seats));
         }else{
             this.passengers+=passengers;
         }
@@ -71,8 +70,8 @@ public class Bus {
     public void outPassengers(int passengers){
         int tmp=this.passengers-passengers;
         if (tmp<0){
+            System.out.println("Vystoupit mohlo jen "+(this.passengers));
             this.passengers=0;
-            System.out.println("Vystoupit mohlo jen "+(-tmp));
         }else{
             this.passengers-=passengers;
         }
