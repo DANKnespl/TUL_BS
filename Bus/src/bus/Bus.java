@@ -9,12 +9,76 @@ package bus;
  * @author Tommy
  */
 public class Bus {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    private int seats;
+    private int passengers;
+    private int line;
+    private String owner;
+    
+    
+    public Bus(int seats, int line, String owner){
+        this.seats=seats;
+        this.line=line;
+        this.owner=owner;
+        this.passengers=0;
     }
     
+    public Bus(){
+        this.seats=40;
+        this.line=-1;
+        this.owner="";
+        this.passengers=0;
+    }
+    
+    public int getSeats(){
+        return seats;
+    }
+    
+    public int getPassengers(){
+        return passengers;
+    }
+    
+    public int getLine(){
+        return line;
+    }
+    
+    public String getOwner(){
+        return owner;
+    }
+    
+    public void setLine(int new_line){
+        this.line=new_line;
+    }
+    
+    public void setOwner(String new_owner){
+        this.owner=new_owner;
+    }
+    
+    @Override
+    public String toString(){
+        return "Autobus číslo "+line+" společnosti "+owner+" s počtem sedadel "+seats+" veze "+passengers+" cestujících.";
+    }
+    
+    public void inPassengers(int passengers){
+        int tmp=this.passengers+passengers;
+        if (tmp>seats){
+            this.passengers=seats;
+            System.out.println("Nastoupit mohlo jen "+(tmp-seats));
+        }else{
+            this.passengers+=passengers;
+        }
+    }
+    
+    public void outPassengers(int passengers){
+        int tmp=this.passengers-passengers;
+        if (tmp<0){
+            this.passengers=0;
+            System.out.println("Vystoupit mohlo jen "+(-tmp));
+        }else{
+            this.passengers-=passengers;
+        }
+    }
+    
+    public void end(){
+        outPassengers(passengers);
+    }
 }
