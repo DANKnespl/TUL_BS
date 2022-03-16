@@ -16,15 +16,15 @@ public class Polyn {
     public static void main(String[] args) {
         double[] lel={1,0,3};
         Polynom a = Polynom.getInstanceNonRev(1,2,3);
-        System.out.println(a);
-        lel[1]=8;
-        System.out.println(a);
-        System.out.println(a.getLevel());
-        System.out.println(a.getKoef(0));
-        Polynom b = a.derive();
-        System.out.println(b);
-        System.out.println(a.add(a));
+        Polynom b = Polynom.getInstanceNonRev(1,2);
         
+        System.out.println(a);
+        System.out.println(PolynomLib.add(a, b));
+        System.out.println(a);
+        System.out.println(PolynomLib.sub(a, b));
+        System.out.println(PolynomLib.mulC(a, 7));
+        System.out.println(b.getLevel());
+        System.out.println(PolynomLib.mulP(a, b));
     }
     
 }
