@@ -27,15 +27,13 @@ public class BusApp {
                 passengers=uni.getPassengers();
                 out=sc.nextInt();
                 in=sc.nextInt();
-                if (passengers-out<0){
+                if (uni.outPassengers(out)){
                     System.out.println("Vystoupit mohlo jen "+(passengers));
                 }
-                uni.outPassengers(out);
                 passengers=uni.getPassengers();
-                if (passengers+in>seats){
+                if (uni.inPassengers(in)){
                     System.out.println("Nastoupit mohlo jen "+(seats-passengers));
                 }
-                uni.inPassengers(in);
             }else{
                 uni.end();
             }

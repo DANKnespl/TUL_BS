@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package bus;
 
-/**
- *
- * @author Tommy
- */
 public class Bus {
     private int seats;
     private int passengers;
@@ -58,20 +50,24 @@ public class Bus {
         return "Autobus číslo "+line+" společnosti "+owner+" s počtem sedadel "+seats+" veze "+passengers+" cestujících.";
     }
     
-    public void inPassengers(int passengers){
+    public boolean inPassengers(int passengers){
         if (passengers>seats-this.passengers){
             this.passengers=seats;
+            return true;
         }else{
             this.passengers+=passengers;
+            return false;
         }
     }
     
-    public void outPassengers(int passengers){
+    public boolean outPassengers(int passengers){
         int tmp=this.passengers-passengers;
         if (tmp<0){
             this.passengers=0;
+            return true;
         }else{
             this.passengers-=passengers;
+            return false;
         }
     }
     
