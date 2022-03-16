@@ -39,6 +39,18 @@ public class MoneyBox{
         public void incrementTwos(int numTwos){
             twos+=numTwos;
         }
+        public void decrementOnes(int numOnes){
+            ones-=numOnes; 
+        }
+
+        public void decrementTwos(int numTwos){
+            twos-=numTwos;
+        }
+        
+        public void takeMoney(int numOnes,int numTwos){
+            decrementOnes(numOnes);
+            decrementTwos(numTwos);
+        }
         
         public void insertMoney(int numOnes,int numTwos){
             incrementOnes(numOnes);
@@ -50,7 +62,7 @@ public class MoneyBox{
         }
         
         public void transfermoney(MoneyBox end, int ones, int twos){
-            insertMoney(-ones,-twos);
+            takeMoney(ones,twos);
             end.insertMoney(ones,twos);
         }
         

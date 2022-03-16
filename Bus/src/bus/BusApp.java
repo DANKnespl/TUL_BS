@@ -41,8 +41,6 @@ public class BusApp {
             }
                 System.out.println(uni);
                 System.out.println("");
-            
         }
     }
-    
 }

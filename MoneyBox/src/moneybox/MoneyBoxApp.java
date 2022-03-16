@@ -33,7 +33,7 @@ public class MoneyBoxApp {
     }
     
     public static void transfermoney(MoneyBox source, MoneyBox end, int ones, int twos){
-        source.insertMoney(-ones,-twos);
+        source.takeMoney(ones,twos);
         end.insertMoney(ones,twos);
     }
     
