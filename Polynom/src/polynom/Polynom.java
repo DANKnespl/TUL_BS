@@ -75,6 +75,14 @@ public class Polynom {
     }
 
     public double getKoef(int index) {
-        return koefs[index];
+        return (index>koefs.length-1?0:this.koefs[index]);
+    }
+    public double ValueX(double x){
+        double out = 0;
+        for (int i = koefs.length-1; i >=0; i--) {
+            out=x*out+koefs[i];
+        }
+        return out;
+        
     }
 }
