@@ -24,7 +24,8 @@ public class LoginController {
         for(int i=0;i<users.size();i++){
             if(email == null ? users.get(i).getEmail() == null : email.equals(users.get(i).getEmail())){
                 if(password == null ? users.get(i).getPass() == null : password.equals(users.get(i).getPass())){
-                    NewMain.Users.set(i,(new TFAController()).generate2FA(users.get(i)));
+                    users.set(i,(new TwoFactorAuthController()).generate2FA(users.get(i)));
+                    NewMain.setUsers(users);
                     return i;
                 }
             }
