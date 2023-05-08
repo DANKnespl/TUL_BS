@@ -65,11 +65,30 @@ public class Account {
     }
 
     public boolean payMoney(float amount,int index){
-        throw new UnsupportedOperationException();
+        if (amount>0){
+            if(!enoughMoney(amount,index)){
+                amount = this.currencies.get(index).Transform(amount, this.currencies.get(0));
+                index=0;
+                if(!enoughMoney(amount,index)){
+                    
+                    System.out.println("Nedostatek peněz");
+                    return false;
+                }
+            }
+            
+            Transaction tr = new Transaction(-amount,currencies.get(index).getAbr());
+            this.history.add(tr);
+            this.money.set(index,this.money.get(index)-amount);
+            FileSaverService.saveTransaction(number, tr,"target/classes/data/Transactions.txt");
+            return true;
+        }else{
+            return false;
+        }
     }
     
     public boolean payMoney(float amount,Currency curr){
-        throw new UnsupportedOperationException();
+        int index = findCurrency(curr);
+        return payMoney(this.currencies.get(index).Transform(amount, curr),index);
     }
     
     public String TransactionOut(){
