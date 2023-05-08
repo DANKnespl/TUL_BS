@@ -11,6 +11,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
@@ -47,15 +48,31 @@ public class FileSaverService {
         }
     }
     
-    public static void saveAccounts(ArrayList<Account> accounts,String path){
-        throw new UnsupportedOperationException();
+    public static void saveAccounts(ArrayList<Account> accounts,String path) throws IOException{
+        StringBuilder sb = new StringBuilder();
+        for(int j = 0;j<accounts.size();j++){
+            Account account = accounts.get(j);
+            sb.append(account.getNumber());
+            for (int i = 0;i<account.getCurrencies().size();i++){
+                sb.append("|").append(account.getMoney().get(i)).append("|").append(account.getCurrencies().get(i).getAbr());
+            }
+        sb.append("\n");
+        }
+        FileSaverService.saveToFile(path,sb.toString(),false);
     }
     
-    public static void saveTransaction(String AccountNumber, Transaction transaction,String path){
-        throw new UnsupportedOperationException();
+    public static void saveTransaction(String AccountNumber, Transaction transaction,String path) throws IOException{
+        StringBuilder sb = new StringBuilder();
+        sb.append(AccountNumber).append("|").append(transaction.getDate()).append("|").append(transaction.getAmount()).append("|").append(transaction.getAbr()).append("\n");
+        FileSaverService.saveToFile(path,sb.toString(),true);
     }
     
-    public static void saveToFile(String path,String text,boolean append){
-        throw new UnsupportedOperationException();
+    public static void saveToFile(String path,String text,boolean append) throws UnsupportedEncodingException, IOException{
+        if (append){
+            text=FileLoaderService.readFromBlob(path)+text;
+            saveToBlob(path,text);
+        }else{
+            saveToBlob(path,text);
+        }
     }
 }
