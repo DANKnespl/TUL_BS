@@ -49,6 +49,12 @@ public class NewMain {
     public static void setUsers(ArrayList<User> Users) {
         NewMain.Users = Users;
     }
+    public static void setAccounts(ArrayList<Account> Accounts) {
+        NewMain.Accounts = Accounts;
+    }
+    public static void setCurrencies(ArrayList<Currency> Currencies) {
+        NewMain.Currencies = Currencies;
+    }
     
     @Scheduled(cron = "0 30 14 * * 1-5")
     public void scheduledFetch(){
