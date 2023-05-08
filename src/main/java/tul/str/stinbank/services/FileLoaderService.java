@@ -20,6 +20,7 @@ import java.util.Scanner;
 import tul.str.stinbank.definedClasses.Account;
 import tul.str.stinbank.definedClasses.Currency;
 import tul.str.stinbank.definedClasses.Transaction;
+import tul.str.stinbank.definedClasses.User;
 
 /**
  *
@@ -169,10 +170,22 @@ public class FileLoaderService {
     }
     
     static Currency strToCurrency(String currency, ArrayList<Currency> currencies){
-        throw new UnsupportedOperationException();
+        Currency curr = null;
+            for(int i = 0;i< currencies.size();i++){
+                if(currencies.get(i).getAbr().equals(currency)){
+                    curr = currencies.get(i);
+                    break;
+                }
+            }
+        return curr;
     }
     
     private static Account findAcc(ArrayList<Account> accounts,String accNumber){
-        throw new UnsupportedOperationException();
+        for(int i = 0;i<accounts.size();i++){
+            if (accounts.get(i).getNumber().equals(accNumber)) {
+                return accounts.get(i);
+            }
+        }
+        return null;
     }
 }
