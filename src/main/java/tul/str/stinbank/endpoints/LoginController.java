@@ -17,7 +17,6 @@ import tul.str.stinbank.definedClasses.User;
  */
 @RestController
 public class LoginController {
-    
     @CrossOrigin()
     @RequestMapping("/login")
     public int login(String email, String password){
