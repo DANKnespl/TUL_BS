@@ -5,6 +5,12 @@
 package tul.str.stinbank.services;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import tul.str.stinbank.definedClasses.Account;
 import tul.str.stinbank.definedClasses.Currency;
@@ -17,13 +23,25 @@ import tul.str.stinbank.definedClasses.Transaction;
 public class FileLoaderService {
     private static GoogleCredentials credentials;
     public static void FLSSetup(){
-        throw new UnsupportedOperationException();
+        try{
+            credentials = GoogleCredentials.fromStream(new FileInputStream("target/classes/stinbanking-22f19bfc0a3a.json"));
+        }catch(Exception e){
+            credentials = null;
+        }
     }
 
-    public static String readFromBlob(String fileName){
-        throw new UnsupportedOperationException();
+    public static String readFromBlob(String fileName) throws UnsupportedEncodingException{
+        FLSSetup();
+        Storage storage;
+        if (credentials == null){
+            storage = StorageOptions.getDefaultInstance().getService();
+        }else{
+            storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        }
+        Blob blob = storage.get(BlobId.of("stinbnkdata", fileName));
+        byte[] content = blob.getContent();
+        return new String(content, "UTF-8");
     }
-        
     public static ArrayList loadCurrencies(String filePath) {
         throw new UnsupportedOperationException();
     }
