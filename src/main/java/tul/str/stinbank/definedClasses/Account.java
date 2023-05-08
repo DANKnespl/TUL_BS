@@ -57,11 +57,20 @@ public class Account {
     }
     
     public boolean addMoney(float amount,int index){
-        throw new UnsupportedOperationException();
+        if (amount>0){
+            Transaction tr = new Transaction(amount,currencies.get(index).getAbr());
+            this.history.add(tr);
+            this.money.set(index,this.money.get(index)+amount);
+            FileSaverService.saveTransaction(number, tr,"target/classes/data/Transactions.txt");
+            return true;
+        }else{
+            return false;
+        }
     }
     
     public boolean addMoney(float amount,Currency curr){ 
-        throw new UnsupportedOperationException();
+        int index = findCurrency(curr);
+        return addMoney(this.currencies.get(index).Transform(amount, curr),index); 
     }
 
     public boolean payMoney(float amount,int index){
