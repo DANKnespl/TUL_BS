@@ -10,7 +10,7 @@ import java.util.Random;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tul.str.stinbank.app.NewMain;
+import tul.str.stinbank.NewMain;
 import tul.str.stinbank.definedClasses.Account;
 import tul.str.stinbank.definedClasses.Currency;
 import tul.str.stinbank.definedClasses.User;
