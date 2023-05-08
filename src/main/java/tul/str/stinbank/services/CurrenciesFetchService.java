@@ -32,7 +32,6 @@ public class CurrenciesFetchService {
                 currencies+= new String(buffer, 0, count);
             }
         }
-        FileSaverService.saveToFile("kurzy.txt", currencies, false);
         FileSaverService.saveToFile(file, currencies, false);
     }
 }

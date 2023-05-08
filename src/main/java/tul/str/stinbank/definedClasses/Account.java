@@ -91,8 +91,6 @@ public class Account {
                 amount = this.currencies.get(index).Transform(amount, this.currencies.get(0));
                 index=0;
                 if(!enoughMoney(amount,index)){
-                    
-                    System.out.println("Nedostatek peněz");
                     return false;
                 }
             }

@@ -21,7 +21,6 @@ public class LoginController {
     @RequestMapping("/login")
     public int login(String email, String password){
         ArrayList<User> users = NewMain.getUsers();
-        System.out.println(email+" "+password);
         for(int i=0;i<users.size();i++){
             if(email == null ? users.get(i).getEmail() == null : email.equals(users.get(i).getEmail())){
                 if(password == null ? users.get(i).getPass() == null : password.equals(users.get(i).getPass())){
