@@ -4,7 +4,9 @@
  */
 package tul.str.stinbank.definedClasses;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import tul.str.stinbank.services.FileSaverService;
 
 /**
  *
@@ -64,7 +66,7 @@ public class Account {
         throw new UnsupportedOperationException();
     }
 
-    public boolean payMoney(float amount,int index){
+    public boolean payMoney(float amount,int index) throws IOException{
         if (amount>0){
             if(!enoughMoney(amount,index)){
                 amount = this.currencies.get(index).Transform(amount, this.currencies.get(0));
@@ -86,7 +88,7 @@ public class Account {
         }
     }
     
-    public boolean payMoney(float amount,Currency curr){
+    public boolean payMoney(float amount,Currency curr) throws IOException{
         int index = findCurrency(curr);
         return payMoney(this.currencies.get(index).Transform(amount, curr),index);
     }
