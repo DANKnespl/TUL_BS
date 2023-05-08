@@ -113,11 +113,20 @@ public class Account {
     }
     
     public String TransactionOut(){
-        throw new UnsupportedOperationException();
+        StringBuilder sb = new StringBuilder();
+        for(int i=history.size()-1;i>=0;i--){
+            sb.append(history.get(i).toString()).append("\n");
+        }
+        return sb.toString();
     }
 
     @Override
     public String toString() {
-        return "Account{" + "number=" + number + ", money=" + money + ", currencies=" + currencies + ", history=" + history + '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.number).append("\n");
+        for(int i = 0;i<currencies.size();i++){
+            sb.append(currencies.get(i).getAbr()).append(" ").append(money.get(i)).append("\n");
+        }
+        return sb.toString();
     }
 }
