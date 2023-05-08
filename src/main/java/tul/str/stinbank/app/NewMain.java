@@ -7,6 +7,9 @@ package tul.str.stinbank.app;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import tul.str.stinbank.definedClasses.Account;
 import tul.str.stinbank.definedClasses.Currency;
 import tul.str.stinbank.definedClasses.User;
@@ -17,6 +20,8 @@ import tul.str.stinbank.services.FileLoaderService;
  *
  * @author Tommy
  */
+@EnableScheduling
+@SpringBootApplication
 public class NewMain {
 
     private static ArrayList<Currency> Currencies = new ArrayList();
@@ -44,4 +49,14 @@ public class NewMain {
     public static void setUsers(ArrayList<User> Users) {
         NewMain.Users = Users;
     }
+    
+    @Scheduled(cron = "0 30 14 * * 1-5")
+    public void scheduledFetch(){
+        Users = null;
+        Currencies = FileLoaderService.loadCurrencies("target/classes/data/kurzy.txt");
+        Accounts = FileLoaderService.loadAccounts("target/classes/data/Accounts.txt","target/classes/data/Transactions.txt",Currencies);
+        Users = FileLoaderService.loadUsers("target/classes/data/Users.txt",Accounts);
+        System.out.println("currencyUpdated");
+    }
+    
 }
