@@ -45,7 +45,7 @@ public class Currency {
     }
     
     public float Transform(float money,Currency curr){
-        throw new UnsupportedOperationException();
+        return money*(curr.getCZK()/curr.getValue())/(this.getCZK()/this.getValue());
     }
     
 }
