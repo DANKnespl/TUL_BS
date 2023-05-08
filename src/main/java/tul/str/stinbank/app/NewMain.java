@@ -32,4 +32,16 @@ public class NewMain {
         SpringApplication.run(NewMain.class, args);
     }
     
+    public static ArrayList getUsers(){
+        return Users;
+    }
+    public static ArrayList getAccounts(){
+        return Accounts;
+    }
+    public static ArrayList getCurrencies(){
+        return Currencies;
+    }
+    public static void setUsers(ArrayList<User> Users) {
+        NewMain.Users = Users;
+    }
 }
