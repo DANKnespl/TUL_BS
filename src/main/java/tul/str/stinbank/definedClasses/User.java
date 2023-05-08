@@ -55,6 +55,9 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "Name=" + Name + ", Surname=" + Surname + ", email=" + email + ", account=" + account + '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append(Name).append(" ").append(Surname).append("\n");
+        sb.append(account);
+        return sb.toString();
     }
 }
