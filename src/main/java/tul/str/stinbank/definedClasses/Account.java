@@ -51,11 +51,21 @@ public class Account {
     }
     
     private boolean enoughMoney(float amount,int index){
-        throw new UnsupportedOperationException();
+        if(this.money.get(index)>=amount){
+            return true;
+        }
+        return false;
     }
     
     private int findCurrency(Currency curr){
-        throw new UnsupportedOperationException();
+        int index =0;
+        for(int i = 0;i<currencies.size();i++){
+            if (curr.getAbr() == null ? this.currencies.get(i).getAbr() == null : curr.getAbr().equals(this.currencies.get(i).getAbr())){
+                index=i;
+                break;
+            }
+        }
+        return index;
     }
     
     public boolean addMoney(float amount,int index) throws IOException{
