@@ -41,4 +41,7 @@ public class NewMain {
     public static ArrayList getCurrencies(){
         return Currencies;
     }
+    public static void setUsers(ArrayList<User> Users) {
+        NewMain.Users = Users;
+    }
 }
