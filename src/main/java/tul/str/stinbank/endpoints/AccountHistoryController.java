@@ -18,6 +18,7 @@ public class AccountHistoryController {
     @CrossOrigin()
     @RequestMapping("/getTransactions")
     public String getTransactions(int userID){
-        throw new UnsupportedOperationException();
+        User user= (User) NewMain.getUsers().get(userID);
+        return user.getAccount().TransactionOut();
     }
 }
