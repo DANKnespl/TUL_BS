@@ -6,10 +6,8 @@ on:
       - main
 
 env:
-  PROJECT_ID: stinbanking
-  APP_NAME: StinBanking 
-  CLOUDSDK_CORE_PROJECT: ${{ env.PROJECT_ID }}
-  CLOUDSDK_APP_VERSION: ${{ github.sha }}
+  PROJECT_ID: your-project-id
+  APP_NAME: your-app-name
 
 jobs:
   deploy:
@@ -30,5 +28,8 @@ jobs:
         mvn clean install
 
     - name: Deploy to App Engine
+      env:
+        CLOUDSDK_CORE_PROJECT: ${{ env.PROJECT_ID }}
+        CLOUDSDK_APP_VERSION: ${{ github.sha }}
       run: |
         gcloud app deploy --project=${{ env.CLOUDSDK_CORE_PROJECT }} --version=${{ env.CLOUDSDK_APP_VERSION }} app.yaml
