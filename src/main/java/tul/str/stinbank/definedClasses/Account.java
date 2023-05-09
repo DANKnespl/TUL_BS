@@ -18,7 +18,6 @@ public class Account {
     private ArrayList<Currency> currencies;
     private ArrayList<Transaction> history;
 
-
     public String getNumber() {
         return number;
     }
