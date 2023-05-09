@@ -1,5 +1,6 @@
 steps:
-- name: 'gcr.io/cloud-builders/mvn'
+- name: 'maven'
+  entrypoint: 'mvn'
   args: ['clean', 'install', '-DskipTests']
 
 - name: 'gcr.io/cloud-builders/docker'
