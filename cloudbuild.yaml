@@ -1,6 +1,6 @@
 steps:
 - name: 'gcr.io/cloud-builders/mvn'
-  args: ['clean', 'install' '-DskipTests']
+  args: ['clean', 'install', '-DskipTests']
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '--tag=gcr.io/$PROJECT_ID/spring-boot', '.']
