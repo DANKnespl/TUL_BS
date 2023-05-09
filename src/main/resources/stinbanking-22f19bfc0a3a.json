@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "stinbanking",
+  "private_key_id": "22f19bfc0a3a7d926d223dbe7bfa067fd77eb09d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDIIE0y7R55w442\njgupiZQoJAKCocooIRsyhZ3s/e7vXRopSGubyg6ovY2kzUW1JKWTRCPsh3Yi1Y1R\nCpxhnRKOgx+JUZXuL6RKWwtPVijVL0y/Bip90fftFZl+Fvuob9Jg/RpqhBq5And3\nHwy/h6kKHK4yMJ4fWTMI5oMzU1F6cvdJK2pT7Dwx15ThPG4cHmpAQPeFyJ+Rxd3u\nRHn9qNAUkY1Wrfuuqimw1dnpkJPXmLgT46rBnQwJSvtF5CpYnI4BQuGNxTXoY87s\nqXZ8u1vDLQlRwi3MJyB3yx8rTBj3qX7KwHlhNvvw+UWDDIT4tVei82TpLYMwwY2C\nlllnEHF5AgMBAAECggEAIqDUOtekylT4KqBxjChuJnP0qz3riP4RgrB0HynhSjHF\n8RbC5/YSi0ghVj7erPVmYRENVkQqQOTKyxcW8B0JtPcjYdNoKgq8VtFiJ5w0/I5u\nrS8X8yV9zNxL7vFzIjYXJQkmpP+u0AyJN2d8ATgsG7/StISNF8eLeSLJ2Pu1wYYM\nxrFNsFONehzQaSBHnnEidtjiYWhh/rWKNzGd6eEbMtpej2OaH4tzh7vtZGo62M1x\nXBPp18tWGg5AfRs1LJVWKjzet9N0szekxWkDwJKo2A6HxOtY55zFc150GXwUws3B\nvKbPVG6LfWd5vWdudho2CTCOJQHWsGRLnAvKKLulsQKBgQDj3IM09D6x4b6Idt18\nDhfwQnuh4pXumxYNry/nTcEHOTx4IAfhqeUE031gEnuaeHIfShxXqoGqNf+2b6+r\nJEE8p8TiNMoAbBPEqVIFnnRP1zEZwDS0q2HcT51a8lSffZxMuM//n7ArBFxS1ZNF\ndQgiIlORPdL7csB5XG2LYbdQKwKBgQDg1vu6KwFMPUOF0zGCBYUlj7XGdeU6PWbr\nrlViHgDF99TqXyUHb6ZIR9JD1UjSp6etQH5/4rTZWdUwiKT1gINZTjn66DzvcWDt\nKaf2S6qdg5yVR/psgm/orhh3vW61u18s9XuJqnU1nBbIIGYbilf2fJe3AlAP9Ewe\nKiVp9PaO6wKBgQCuBcefNbp8GDBwAHf/OrRFpkDNzkM7y+333Yf0W4nEfo4UIEJk\nsmBaYzspmHQV8U8XXn5u5aXJ3RvCtWGwjyvTqz3OlQqBcAlY9QfTisTCBVNWm1il\ncw52N8exocnHVSN95NfWHpto/xeTm9GyBkOD7jtsfY8YwvcEuPZgsOxTqQKBgBN1\nh8PNBQe8JaPna1l9cNCXZ3wNqBEqT0YGiI09W4PGtz6xjVrfZtzKmoAUbYEN0Y1F\nD62xyUUmaTUSHnTA8p1AD/SPNPbkMSdVe5vtYI7RXTPuTtYlU9ondyal1ncUCGCz\nvkVj41EIeVBIvY2Uo5hJoDfOk29ODWhu7V4GPXCRAoGAEThIvg75YK9bCKWAgfqH\n7a6QpdXywreAks/uIWBFaER1re65tb3TjCcgANZgMNaRan8nI8bgPT558d8Y6WuB\nrnTLiLY5+wRM6iSktel+KhOL1plkvmW/Qt0Ykdwb9VzJ/bIJYzEDxBWNrYb6wS5A\nmSpcCFsm0cjddTrQnFQYm1Q=\n-----END PRIVATE KEY-----\n",
+  "client_email": "javaapp@stinbanking.iam.gserviceaccount.com",
+  "client_id": "115677394322259698303",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/javaapp%40stinbanking.iam.gserviceaccount.com"
+}
