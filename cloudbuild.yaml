@@ -1,4 +1,6 @@
 steps:
 - name: 'maven'
   entrypoint: 'mvn'
-  args: ['clean', 'install', '-DskipTests', 'appengine:deploy']
+  args: ['clean', 'install', '-DskipTests']
+- name: 'gcr.io/cloud_builders/gcloud'
+  args: ['app', 'deploy']
