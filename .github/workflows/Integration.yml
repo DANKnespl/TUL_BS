@@ -14,7 +14,8 @@ on:
 
 jobs:
   build:
-
+    
+    
     runs-on: ubuntu-latest
 
     steps:
@@ -75,3 +76,24 @@ jobs:
         run: |
           echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
           echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
+  deploy:
+    needs: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to App Engine
+        uses: google-github-actions/deploy-appengine@v1.2.7
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+
+      - id: 'deploy'
+        uses: 'google-github-actions/deploy-appengine@v1'
+   
+   
+   
+   
+   
+   
+   
