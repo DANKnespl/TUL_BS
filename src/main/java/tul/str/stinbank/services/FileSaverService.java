@@ -27,7 +27,7 @@ public class FileSaverService {
     public static void FSSSetup(){
         try{
             credentials = GoogleCredentials.fromStream(new FileInputStream("target/classes/stinbanking-22f19bfc0a3a.json"));
-        }catch(Exception e){
+        }catch(IOException e){
             credentials = null;
         }
     }

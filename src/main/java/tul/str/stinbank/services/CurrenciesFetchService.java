@@ -8,6 +8,11 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import tul.str.stinbank.endpoints.AddMoneyController;
 
 /**
  *
@@ -17,7 +22,13 @@ public class CurrenciesFetchService {
     public static void fetchCurrencies(String url,String file){
         try {
             downloadUsingStream(url, file);
-        } catch (Exception e) {}
+        } catch (IOException e) {
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" IOException - fetchCurrency\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     private static void downloadUsingStream(String urlStr, String file) throws MalformedURLException, IOException{
