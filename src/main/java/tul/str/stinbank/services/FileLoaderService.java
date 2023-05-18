@@ -10,17 +10,23 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import tul.str.stinbank.definedClasses.Account;
 import tul.str.stinbank.definedClasses.Currency;
 import tul.str.stinbank.definedClasses.Transaction;
 import tul.str.stinbank.definedClasses.User;
+import tul.str.stinbank.endpoints.AddMoneyController;
 
 /**
  *
@@ -54,14 +60,32 @@ public class FileLoaderService {
         Scanner sc;
         try{
             sc = new Scanner(readFromBlob(filePath));
-        }catch(Exception e){
+        }catch(UnsupportedEncodingException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" UnsupportedEncodingException - loadCurrencies\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return currencies;
+        }catch(NullPointerException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" NullPointerExcpetion - loadCurrencies\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return currencies;
         }
         Scanner sData;
         try{
             sc.nextLine();
             sc.nextLine();    
-        }catch(NoSuchElementException e){}
+        }catch(NoSuchElementException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" NoSuchElement - loadCurrencies\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         String tmp;
         while(sc.hasNextLine()){
             tmp=sc.nextLine();
@@ -72,7 +96,13 @@ public class FileLoaderService {
             try{
                 Currency curr = new Currency(sData.nextInt(),sData.next(),sData.nextFloat());
                 currencies.add(curr);
-            }catch(Exception e){}
+            }catch(Exception e){
+                try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" Exception - loadCurrencies\n", true);
+                } catch (IOException ex) {
+                    Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         return currencies;
     }
@@ -82,7 +112,19 @@ public class FileLoaderService {
         Scanner sc;
         try{
             sc = new Scanner(readFromBlob(filePath));
-        }catch(Exception e){
+        }catch(UnsupportedEncodingException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" UnsupportedEncodingException - loadAccounts\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return accounts;
+        }catch(NullPointerException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" NullPointerExcpetion - loadAccounts\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return accounts;
         }
         Scanner sData;
@@ -100,6 +142,11 @@ public class FileLoaderService {
                 try{
                     money = sData.nextFloat();
                 }catch(InputMismatchException ime){
+                    try {
+                        FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" InputMismatchException - loadAccounts\n", true);
+                    } catch (IOException ex) {
+                        Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     add = false;
                     break;
                 }
@@ -124,7 +171,19 @@ public class FileLoaderService {
         Scanner sc;
         try{
             sc = new Scanner(readFromBlob(filePath));
-        }catch(Exception e){
+        }catch(UnsupportedEncodingException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" UnsupportedEncodingException - loadTransaction\n", true);
+                } catch (IOException ex) {
+                    Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            return trans;
+        }catch(NullPointerException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" NullPointerExcpetion - loadTransactions\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return trans;
         }
         String tmp;
@@ -141,6 +200,11 @@ public class FileLoaderService {
                         Transaction tr = new Transaction(value,date,abr);
                         trans.add(tr);
                     }catch(ParseException e){
+                        try {
+                            FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" ParseException - loadTransaction\n", true);
+                        } catch (IOException ex) {
+                            Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         break;
                     }
                 }
@@ -154,7 +218,19 @@ public class FileLoaderService {
         Scanner sc;
         try{
             sc = new Scanner(readFromBlob(filePath));
-        }catch(Exception e){
+        }catch(UnsupportedEncodingException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" UnsupportedEncodingException - loadUsers\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return users;
+        }catch(NullPointerException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" NullPointerExcpetion - loadUsers\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return users;
         }
         Scanner sData;
