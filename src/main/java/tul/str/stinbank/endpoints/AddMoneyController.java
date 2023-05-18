@@ -5,8 +5,12 @@
 package tul.str.stinbank.endpoints;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +50,11 @@ public class AddMoneyController {
                 }
             } 
         }catch(IOException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" IOException - AddMoneyController\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return "Transakce nemohla byt provedena";
         }
         return "Nenalezena mena";

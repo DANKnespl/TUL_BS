@@ -4,7 +4,6 @@
  */
 package tul.str.stinbank;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,12 +27,8 @@ public class NewMain {
     private static ArrayList<Account> Accounts = new ArrayList();
     private static ArrayList<User> Users = new ArrayList();
     
-    public static void main(String[] args) throws IOException{
-        CurrenciesFetchService.fetchCurrencies("https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt","target/classes/data/kurzy.txt");
-        Currencies = FileLoaderService.loadCurrencies("target/classes/data/kurzy.txt");
-        Accounts = FileLoaderService.loadAccounts("target/classes/data/Accounts.txt","target/classes/data/Transactions.txt",Currencies);
-        Users = FileLoaderService.loadUsers("target/classes/data/Users.txt",Accounts);
-        
+    public static void main(String[] args){
+        scheduledFetch();
         SpringApplication.run(NewMain.class, args);
     }
     
@@ -57,7 +52,8 @@ public class NewMain {
     }
     
     @Scheduled(cron = "0 30 14 * * 1-5")
-    public void scheduledFetch(){
+    public static void scheduledFetch(){
+        CurrenciesFetchService.fetchCurrencies("https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt","target/classes/data/kurzy.txt");
         Users = null;
         Currencies = FileLoaderService.loadCurrencies("target/classes/data/kurzy.txt");
         Accounts = FileLoaderService.loadAccounts("target/classes/data/Accounts.txt","target/classes/data/Transactions.txt",Currencies);

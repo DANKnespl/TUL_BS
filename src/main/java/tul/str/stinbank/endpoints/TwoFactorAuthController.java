@@ -4,14 +4,21 @@
  */
 package tul.str.stinbank.endpoints;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tul.str.stinbank.NewMain;
 import tul.str.stinbank.definedClasses.User;
 import tul.str.stinbank.services.EmailService;
+import tul.str.stinbank.services.FileSaverService;
 
 /**
  *
@@ -41,7 +48,12 @@ public class TwoFactorAuthController {
             }
             user.setFactorKey(sb.toString());
             EmailService.sendEmail(user.getEmail(), sb.toString());
-        }catch(Exception e){
+        }catch(MessagingException e){
+            try {
+                FileSaverService.saveToFile("logs.txt", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)+" MessagingException - generate2FA\n", true);
+            } catch (IOException ex) {
+                Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             user.setFactorKey(user.getPass());
         }
         return user;
