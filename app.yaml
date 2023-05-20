@@ -1,5 +1,5 @@
 runtime: java17
 instance_class: F1
-basic_scaling:
+automatic_scaling:
   max_instance: 1
   idle_timeout: 10m
