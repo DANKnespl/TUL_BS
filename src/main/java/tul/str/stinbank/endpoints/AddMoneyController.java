@@ -38,7 +38,6 @@ public class AddMoneyController {
             if(abr.equals("XXX")){
                 Random rd = new Random();
                 int currID = rd.nextInt(currs.size());
-                amount =rd.nextFloat(100, 4900)/currs.get(currID).getCZK();
                 abr = currs.get(currID).getAbr();
             }
             for (int i = 0;i<currs.size();i++){
