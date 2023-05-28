@@ -31,9 +31,11 @@ public class AccountTest {
         ArrayList<Float> money = new ArrayList<>();
         money.add(1000f);  // set initial balance for USD
         money.add(500f);   // set initial balance for EUR
+        money.add(1000f);
         ArrayList<Currency> currencies = new ArrayList<>();
         currencies.add(new Currency(1,"USD", 25f));
         currencies.add(new Currency(1,"EUR", 20f));
+        currencies.add(new Currency(1,"GBP", 1f));
         ArrayList<Transaction> history = new ArrayList<>();
         account = new Account("123456789", money, currencies, history);
     }
@@ -66,25 +68,27 @@ public class AccountTest {
     public void testPayMoney() {
         Currency currTest = new Currency(1,"CZK",1);
         try{
-        assertTrue(account.payMoney(500f, 1));
+        assertTrue(account.payMoney(500f, 1)==0);
         assertEquals(0f, account.getMoney().get(1), 0);
         assertEquals(1000f, account.getMoney().get(0), 0);
-        assertEquals(false, account.payMoney(2000f, 1));
+        assertEquals(1, account.payMoney(2000f, 1));
         assertEquals(0f, account.getMoney().get(1), 0);
         assertEquals(1000f, account.getMoney().get(0), 0);
-        assertTrue(account.payMoney(10f, 0));
+        assertTrue(account.payMoney(10f, 0)==0);
         assertEquals(0f, account.getMoney().get(1), 0);
         assertEquals(990f, account.getMoney().get(0), 0);
-        assertFalse(account.payMoney(-20, 1));
+        assertTrue(account.payMoney(-20, 1)==2);
         
-        assertFalse(account.payMoney(10000, account.getCurrencies().get(0)));
-        assertTrue(account.payMoney(1, account.getCurrencies().get(0)));
-        assertFalse(account.payMoney(100000000, account.getCurrencies().get(1)));
-        assertFalse(account.payMoney(100000000, currTest));
-        assertTrue(account.payMoney(1, currTest));
+        assertTrue(account.payMoney(10000, account.getCurrencies().get(0))==1);
+        assertTrue(account.payMoney(1, account.getCurrencies().get(0))==0);
+        assertTrue(account.payMoney(100000000, account.getCurrencies().get(1))==1);
+        assertTrue(account.payMoney(100000000, currTest)==1);
+        assertTrue(account.payMoney(1090,account.getCurrencies().get(2))==0);
+        assertEquals(-99f, account.getMoney().get(2), 0);
+        assertTrue(account.payMoney(1090,account.getCurrencies().get(2))==1);
+        
         }catch(IOException e){
         }
-        
     }
 
     @Test
@@ -104,7 +108,6 @@ public class AccountTest {
         assertTrue(account.addMoney(100000000, currTest));
         assertTrue(account.addMoney(1, currTest));
         }catch(IOException e){
-            
         }
     }
 
@@ -112,7 +115,8 @@ public class AccountTest {
     public void testToString() {
         String expected = "123456789\n" +
                 "USD 1000.0\n" +
-                "EUR 500.0\n";
+                "EUR 500.0\n" +
+                "GBP 1000.0\n";
         assertEquals(expected, account.toString());
     }
 

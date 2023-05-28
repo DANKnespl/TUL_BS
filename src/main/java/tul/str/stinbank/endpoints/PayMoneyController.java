@@ -42,11 +42,17 @@ public class PayMoneyController {
             }
             for (int i = 0;i<currs.size();i++){
                 if (currs.get(i).getAbr() == null ? abr == null : currs.get(i).getAbr().equals(abr)){
-                    if(acc.payMoney(amount, currs.get(i))){
-                        FileSaverService.saveAccounts(accounts,"target/classes/data/Accounts.txt");
-                        return "uspesne provedeno";
-                    }else{
-                        return "nedostatek financi";
+                    switch(acc.payMoney(amount, currs.get(i))){
+                        case 0 -> {
+                            FileSaverService.saveAccounts(accounts,"target/classes/data/Accounts.txt");
+                            return "Úspěšně provedeno";
+                        }
+                        case 1 -> {
+                            return "Není dostatečný zůstatek pro provedení platby";
+                        }
+                        case 2 -> {
+                            return "Nevalidní hodnota množství";
+                        }
                     }
                 }
             }
@@ -56,8 +62,8 @@ public class PayMoneyController {
             } catch (IOException ex) {
                 Logger.getLogger(AddMoneyController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return "platba nemohla byt provedena";
+            return "Platba nemohla být provedena";
         }
-        return "Nenalezena mena";
+        return "Měna nenalezena";
     }
 }

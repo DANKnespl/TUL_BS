@@ -50,10 +50,7 @@ public class Account {
     }
     
     private boolean enoughMoney(float amount,int index){
-        if(this.money.get(index)>=amount){
-            return true;
-        }
-        return false;
+        return (this.money.get(index)*(float)1.1)>amount;
     }
     
     private int findCurrency(Currency curr){
@@ -84,27 +81,30 @@ public class Account {
         return addMoney(this.currencies.get(index).Transform(amount, curr),index); 
     }
 
-    public boolean payMoney(float amount,int index) throws IOException{
+    public int payMoney(float amount,int index) throws IOException{
         if (amount>0){
             if(!enoughMoney(amount,index)){
                 amount = this.currencies.get(index).Transform(amount, this.currencies.get(0));
                 index=0;
                 if(!enoughMoney(amount,index)){
-                    return false;
+                    return 1;
                 }
             }
-            
             Transaction tr = new Transaction(-amount,currencies.get(index).getAbr());
             this.history.add(tr);
-            this.money.set(index,this.money.get(index)-amount);
+            if (this.money.get(index)-amount >= 0){
+                this.money.set(index,this.money.get(index)-amount);
+            }else{
+                this.money.set(index,(this.money.get(index)-amount)*(float)1.1);
+            }
             FileSaverService.saveTransaction(number, tr,"target/classes/data/Transactions.txt");
-            return true;
+            return 0;
         }else{
-            return false;
+            return 2;
         }
     }
     
-    public boolean payMoney(float amount,Currency curr) throws IOException{
+    public int payMoney(float amount,Currency curr) throws IOException{
         int index = findCurrency(curr);
         return payMoney(this.currencies.get(index).Transform(amount, curr),index);
     }
