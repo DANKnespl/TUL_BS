@@ -1,0 +1,4 @@
+cislo;jmeno;prijmeni
+1;Daniel;Knespl
+3;Tomas;Koten
+8;Kevin;Danek;
