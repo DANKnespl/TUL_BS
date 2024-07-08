@@ -1,0 +1,127 @@
+sudo apt install php-fpm
+tommym02n@balin:~$ sudo systemctl status php8.1-fpm
+● php8.1-fpm.service - The PHP 8.1 FastCGI Process Manager
+     Loaded: loaded (/lib/systemd/system/php8.1-fpm.service; enabled; vendor preset: enabled)
+     Active: active (running)
+
+#v nginx konfiguraci:
+  index index.html index.htm index.nginx-debian.html index.php; #přidal jsem index.php
+  #odkomentoval: 
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    # With php-fpm (or other unix sockets):
+    fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+    # With php-cgi (or other tcp sockets):
+    #fastcgi_pass 127.0.0.1:9000;
+   }
+   #tutorial řekl odkomentovat i 
+    location ~ /\.ht {
+      deny all;
+    }
+tommym02n@balin:~$ sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+tommym02n@balin:~$ sudo systemctl restart nginx
+sudo nano /var/www/html/info.php
+  <?php
+    phpinfo(); 
+  ?>
+
+sudo mv /srv/samba/share/fakt.php /var/www/html/fakt.php
+
+--Stress testing
+128M RAM + 8CPU
+Faktorial cisla 1000000 zabral
+cas: 0.15230298042297 ms
+pamet: 33907472
+
+256M RAM + 8CPU
+Faktorial cisla 1000000 zabral
+cas: 0.15280508995056 ms
+pamet: 33907472
+
+0M RAM + 0CPU
+Faktorial cisla 1000000 zabral
+cas: 0.079909086227417 ms
+pamet: 33907472
+
+0M RAM + 1CPU
+Faktorial cisla 1000000 zabral
+cas: 0.14750504493713 ms
+pamet: 33907472
+
+1G RAM + 0CPU
+Faktorial cisla 1000000 zabral
+cas: 0.23428702354431 ms
+pamet: 33907472
+
+1G RAM + 1CPU
+Faktorial cisla 1000000 zabral
+cas: 0.24244499206543 ms
+pamet: 33907472
+
+#Paměť samotná, zdá se nemá příliš veliký vliv, ale pouze v případě, že nedochází ke swapování
+#S využitým procesorem se čas na zpracování požadavku o pár mikrosekund - samozřejmě prodloužení je 
+#závislé na základní délce výpočtů
+#kombinace swapování a využitého CPU, se nezdá mít příliš velké prodloužení než samotný swap
+
+
+##########Python
+sudo apt install python3-pip
+sudo apt install python3-venv
+
+mkdir ~/myPython
+python3 -m venv WebPyEnv
+source WebPyEnv/bin/activate
+pip install wheel
+pip install gunicorn flask
+nano ~/myPython/myPython.py
+   from flask import Flask
+   app = Flask(__name__)
+
+   @app.route("/python")
+   def hello():
+       return "<h1 style='color:blue'>Hello There!</h1>"
+
+   if __name__ == "__main__":
+       app.run(host='0.0.0.0')
+
+nano ~/myPython/wsgi.py  
+   from myproject import app
+
+   if __name__ == "__main__":
+       app.run()
+
+gunicorn --bind 0.0.0.0:5000 wsgi:app
+
+sudo nano /etc/systemd/system/myPython.service
+   [Unit]
+   Description=Gunicorn instance to serve myproject
+   After=network.target
+
+   [Service]
+   User=tommym02n
+   Group=www-data
+   WorkingDirectory=/home/tommym02n/myPython
+   Environment="PATH=/home/tommym02n/myPython/WebPyEnv/bin"
+   ExecStart=/home/tommym02n/myPython/WebPyEnv/bin/gunicorn --workers 3 --bind unix:myPython.sock -m 007 wsgi:app #máme ponožku
+
+   [Install]
+   WantedBy=multi-user.target
+
+sudo systemctl start myPython
+sudo systemctl enable myPython
+sudo nano /etc/nginx/sites-available/default
+   location /python {
+      include proxy_params;
+      proxy_pass http://unix:/home/tommym02n/myPython/myPython.sock;
+   }
+
+sudo systemctl restart nginx
+
+#Tutorial
+#https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-22-04
+
+balin.nti.tul.cz/python - python
+balin.nti.tul.cz/fakt.php - php
+

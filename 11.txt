@@ -1,0 +1,236 @@
+# pro instalaci jsem využil tento script:
+curl -fsSL https://get.docker.com -o get-docker.sh
+root@balin:~# sudo sh get-docker.sh
+# Executing docker install script, commit: e5543d473431b782227f8908005543bb4389b8de
++ sh -c apt-get update -qq >/dev/null
++ sh -c DEBIAN_FRONTEND=noninteractive apt-get install -y -qq apt-transport-https ca-certificates curl >/dev/null
+debconf: delaying package configuration, since apt-utils is not installed
++ sh -c install -m 0755 -d /etc/apt/keyrings
++ sh -c curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
++ sh -c chmod a+r /etc/apt/keyrings/docker.gpg
++ sh -c echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" > /etc/apt/sources.list.d/docker.list
++ sh -c apt-get update -qq >/dev/null
++ sh -c DEBIAN_FRONTEND=noninteractive apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras docker-buildx-plugin >/dev/null
+debconf: delaying package configuration, since apt-utils is not installed
++ sh -c docker version
+Client: Docker Engine - Community
+ Version:           24.0.7
+ API version:       1.43
+ Go version:        go1.20.10
+ Git commit:        afdd53b
+ Built:             Thu Oct 26 09:07:41 2023
+ OS/Arch:           linux/amd64
+ Context:           default
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          24.0.7
+  API version:      1.43 (minimum version 1.12)
+  Go version:       go1.20.10
+  Git commit:       311b9ff
+  Built:            Thu Oct 26 09:07:41 2023
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.6.25
+  GitCommit:        d8f198a4ed8892c764191ef7b3b06d8a2eeb5c7f
+ runc:
+  Version:          1.1.10
+  GitCommit:        v1.1.10-0-g18a0cb0
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+
+================================================================================
+
+To run Docker as a non-privileged user, consider setting up the
+Docker daemon in rootless mode for your user:
+
+    dockerd-rootless-setuptool.sh install
+
+Visit https://docs.docker.com/go/rootless/ to learn about rootless mode.
+
+
+To run the Docker daemon as a fully privileged service, but granting non-root
+users access, refer to https://docs.docker.com/go/daemon-access/
+
+WARNING: Access to the remote API on a privileged Docker daemon is equivalent
+         to root access on the host. Refer to the 'Docker daemon attack surface'
+         documentation for details: https://docs.docker.com/go/attack-surface/
+
+================================================================================
+
+
+
+
+root@balin:~#  sudo usermod -aG docker root
+
+root@balin:~# docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+719385e32844: Pull complete
+Digest: sha256:c79d06dfdfd3d3eb04cafd0dc2bacab0992ebc243e083cabe208bac4dd7759e0
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+#pro testovaní jsem využil soubory na https://github.com/spring-projects/spring-petclinic.git
+#udělal jsem Dockerfile
+   # syntax=docker/dockerfile:1
+   FROM eclipse-temurin:17-jdk-jammy
+   WORKDIR /app
+   COPY .mvn/ .mvn
+   COPY mvnw pom.xml ./
+   RUN ./mvnw dependency:resolve
+   COPY src ./src
+   CMD ["./mvnw", "spring-boot:run"]
+#buildnul jsem image
+docker build --tag java-docker .
+
+#runnul jsem image
+root@balin:~/dockerJava1/spring-petclinic# docker run java-docker
+....
+
+              |\      _,,,--,,_
+             /,`.-'`'   ._  \-;;,_
+  _______ __|,4-  ) )_   .;.(__`'-'__     ___ __    _ ___ _______
+ |       | '---''(_/._)-'(_\_)   |   |   |   |  |  | |   |       |
+ |    _  |    ___|_     _|       |   |   |   |   |_| |   |       | __ _ _
+ |   |_| |   |___  |   | |       |   |   |   |       |   |       | \ \ \ \
+ |    ___|    ___| |   | |      _|   |___|   |  _    |   |      _|  \ \ \ \
+ |   |   |   |___  |   | |     |_|       |   | | |   |   |     |_    ) ) ) )
+ |___|   |_______| |___| |_______|_______|___|_|  |__|___|_______|  / / / /
+ ==================================================================/_/_/_/
+
+:: Built with Spring Boot :: 3.2.0
+
+
+2023-11-29T08:30:39.884Z  INFO 123 --- [           main] o.s.s.petclinic.PetClinicApplication     : Starting PetClinicApplication using Java 17.0.9 with PID 123 (/app/target/classes started by root in /app)
+...
+
+#Když jsem se nyní snažil sestavit nový image, zjistil jsem, že mám plný disk 
+root@balin:~# df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+tmpfs                               96M  2.6M   94M   3% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv  9.8G  9.3G  9.2M 100% /
+tmpfs                              479M     0  479M   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+/dev/sda2                          1.7G  252M  1.4G  16% /boot
+/dev/sda1                          762M  6.1M  756M   1% /boot/efi
+perun.nti.tul.cz:/srv/nfs          4.2G     0  3.9G   0% /home/tommym02n/perun
+tmpfs                               96M  4.0K   96M   1% /run/user/0
+
+#kolega z nori nepouíval tento skript a měl 80% místo mých 100%
+#takže jsem odinstaloval docker a měl pouze 80%
+sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+
+root@balin:~/dockerJava1/spring-petclinic# df
+Filesystem                        1K-blocks    Used Available Use% Mounted on
+tmpfs                                 97992    2588     95404   3% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv  10218772 7670108   2007992  80% /
+tmpfs                                489952       0    489952   0% /dev/shm
+tmpfs                                  5120       0      5120   0% /run/lock
+/dev/sda2                           1768056  257376   1402548  16% /boot
+/dev/sda1                            779768    6220    773548   1% /boot/efi
+perun.nti.tul.cz:/srv/nfs           4299520       0   4060416   0% /home/tommym02n/perun
+tmpfs                                 97988       4     97984   1% /run/user/0
+
+
+#instalace ještě jednou
+nano dockerer.sh
+   # Add Docker's official GPG key:
+   sudo apt-get update
+   sudo apt-get install ca-certificates curl gnupg
+   sudo install -m 0755 -d /etc/apt/keyrings
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+   # Add the repository to Apt sources:
+   echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+     $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   sudo apt-get update
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+#hello world, hello worldí
+
+#pro testovaní jsem využil soubory na https://github.com/spring-projects/spring-petclinic.git
+#udělal jsem Dockerfile
+   # syntax=docker/dockerfile:1
+   FROM openjdk:18 #byla potřeba alespoň 17.x Java
+   WORKDIR /app
+   COPY .mvn/ .mvn
+   COPY mvnw pom.xml ./
+   RUN ./mvnw dependency:resolve
+   COPY src ./src
+   CMD ["./mvnw", "spring-boot:run"]
+#buildnul jsem image
+docker build --tag java-docker-ojdk18 .
+
+#runnul jsem image
+root@balin:~/dockerJava1/spring-petclinic# docker run java-docker-ojdk18
+...
+              |\      _,,,--,,_
+             /,`.-'`'   ._  \-;;,_
+  _______ __|,4-  ) )_   .;.(__`'-'__     ___ __    _ ___ _______
+ |       | '---''(_/._)-'(_\_)   |   |   |   |  |  | |   |       |
+ |    _  |    ___|_     _|       |   |   |   |   |_| |   |       | __ _ _
+ |   |_| |   |___  |   | |       |   |   |   |       |   |       | \ \ \ \
+ |    ___|    ___| |   | |      _|   |___|   |  _    |   |      _|  \ \ \ \
+ |   |   |   |___  |   | |     |_|       |   | | |   |   |     |_    ) ) ) )
+ |___|   |_______| |___| |_______|_______|___|_|  |__|___|_______|  / / / /
+ ==================================================================/_/_/_/
+
+:: Built with Spring Boot :: 3.2.0
+
+
+2023-11-29T09:22:29.747Z  INFO 124 --- [           main] o.s.s.petclinic.PetClinicApplication     : Starting PetClinicApplication using Java 18.0.2.1 with PID 124 (/app/target/classes started by root in /app)
+...
+
+root@balin:~/dockerJava1/spring-petclinic# df
+Filesystem                        1K-blocks    Used Available Use% Mounted on
+tmpfs                                 97992    2616     95376   3% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv  10218772 8838552    839548  92% /
+tmpfs                                489952       0    489952   0% /dev/shm
+tmpfs                                  5120       0      5120   0% /run/lock
+/dev/sda2                           1768056  257376   1402548  16% /boot
+/dev/sda1                            779768    6220    773548   1% /boot/efi
+perun.nti.tul.cz:/srv/nfs           4299520       0   4060416   0% /home/tommym02n/perun
+tmpfs                                 97988       4     97984   1% /run/user/0
+#Zjistil jsem, že chyba nebyla na straně install scriptu, ale na bloated docker obrazech kvůli mavenu aby se rozběhla aplikace.
+#Rozhodl jsem se tedy začít od začátku, nerozběhávat maven, tedy ani aplikaci.
+
+#přepsal jsem dockerfile na:
+   FROM openjdk:17
+   CMD ["java","--version"]
+#buildnul image
+#přepsal dockerfile na 
+   FROM openjdk:11
+   CMD ["java","--version"]
+
+#runnul oba image a zkontroloval místo na disku
+root@balin:~/dockerJava1/spring-petclinic# docker run openjdk17
+openjdk 17.0.2 2022-01-18
+OpenJDK Runtime Environment (build 17.0.2+8-86)
+OpenJDK 64-Bit Server VM (build 17.0.2+8-86, mixed mode, sharing)
+root@balin:~/dockerJava1/spring-petclinic# docker run openjdk11
+openjdk 11.0.16 2022-07-19
+OpenJDK Runtime Environment 18.9 (build 11.0.16+8)
+OpenJDK 64-Bit Server VM 18.9 (build 11.0.16+8, mixed mode, sharing)
+root@balin:~/dockerJava1/spring-petclinic# df -h
+Filesystem                         Size  Used Avail Use% Mounted on
+tmpfs                               96M  2.6M   94M   3% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv  9.8G  8.9G  423M  96% /
+tmpfs                              479M     0  479M   0% /dev/shm
+tmpfs                              5.0M     0  5.0M   0% /run/lock
+/dev/sda2                          1.7G  252M  1.4G  16% /boot
+/dev/sda1                          762M  6.1M  756M   1% /boot/efi
+perun.nti.tul.cz:/srv/nfs          4.2G     0  3.9G   0% /home/tommym02n/perun
+tmpfs                               96M  4.0K   96M   1% /run/user/0
+
+#Disk je pořád poměrně plný, ale lepší mít 400M volných s oběma obrazy než 100% s jedním... 
+

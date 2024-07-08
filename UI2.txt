@@ -1,0 +1,138 @@
+1.
+tommym02n@balin:~$ cat /etc/ssh/sshd_config | grep PermitRootLogin
+#PermitRootLogin prohibit-password
+
+Root opravdu má povolené pouze připojení pomocí klíčů, nastavení je sice zakomentované, ale PRL je implicitně prohibit-password
+
+2.
+#! /bin/bash
+file="./servers.txt"
+#možnost spustit skript s jinými parametry
+if [ $# -eq 0 ]
+then
+        usr="ui"
+        pass="unix&internet"
+elif [ $# -eq 1 ]
+then
+        usr=$1
+        pass="unix&internet"
+else
+        usr=$1
+        pass=$2
+fi
+
+for host in $(cat servers.txt)
+do
+        sshpass -p $pass ssh -o StrictHostKeyChecking=no $usr@$host "hostname"
+	#sshpass povoluje předat heslo pro připojení.
+	#StrictHostKeyChecking=no přidává všechny servery, ke kterým se připojujeme do ./ssh/known_hosts
+done
+
+tommym02n@balin:~$ bash PepegaFinder.sh
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+Permission denied, please try again.
+ssh: connect to host prsten.nti.tul.cz port 22: No route to host
+ui@zihadlo.nti.tul.cz: Permission denied (publickey).
+perun
+
+Nikdo z mých kolegů již nemá kombinaci ui/unix&internet jako user/pass.
+Zdá se ale, že si prsten sestřelil ssh service :(
+
+
+3.
+#výpisy logů zaměřené pouze na uživatele ui
+tommym02n@balin:~$ sudo utmpdump /var/log/wtmp | grep "\[ui "
+Utmp dump of /var/log/wtmp
+[7] [00779] [    ] [ui      ] [tty1        ] [                    ] [0.0.0.0        ] [2023-09-04T19:08:42,169304+00:00]
+[7] [01164] [ts/0] [ui      ] [pts/0       ] [147.230.11.12       ] [147.230.11.12  ] [2023-09-04T19:13:40,107629+00:00]
+[7] [01193] [ts/0] [ui      ] [pts/0       ] [147.230.11.12       ] [147.230.11.12  ] [2023-09-04T19:14:28,916458+00:00]
+[7] [09770] [ts/0] [ui      ] [pts/0       ] [147.230.11.111      ] [147.230.11.111 ] [2023-09-08T12:14:21,762547+00:00]
+[7] [09844] [ts/0] [ui      ] [pts/0       ] [147.230.17.49       ] [147.230.17.49  ] [2023-09-08T12:35:46,957202+00:00]
+[7] [30187] [ts/0] [ui      ] [pts/0       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T05:50:29,753213+00:00]
+[7] [30346] [ts/1] [ui      ] [pts/1       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:12:52,779117+00:00]
+[7] [30697] [ts/1] [ui      ] [pts/1       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:35:28,628133+00:00]
+[7] [30793] [ts/1] [ui      ] [pts/1       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:40:24,010640+00:00]
+[7] [30853] [ts/1] [ui      ] [pts/1       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:43:01,207381+00:00]
+[7] [30926] [ts/1] [ui      ] [pts/1       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:44:08,921926+00:00]
+[7] [31059] [ts/1] [ui      ] [pts/1       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:49:24,595796+00:00]
+[7] [31194] [ts/1] [ui      ] [pts/1       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:50:56,471807+00:00]
+[7] [32927] [ts/0] [ui      ] [pts/0       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T08:32:53,562586+00:00]
+[7] [33004] [ts/0] [ui      ] [pts/0       ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T08:33:12,797275+00:00]
+tommym02n@balin:~$ sudo utmpdump /var/log/btmp | grep "\[ui "
+Utmp dump of /var/log/btmp
+[6] [30187] [    ] [ui      ] [ssh:notty   ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T05:50:18,000000+00:00]
+[6] [30346] [    ] [ui      ] [ssh:notty   ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:12:43,000000+00:00]
+[6] [30778] [    ] [ui      ] [ssh:notty   ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:39:06,000000+00:00]
+[6] [30778] [    ] [ui      ] [ssh:notty   ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:39:34,000000+00:00]
+[6] [30778] [    ] [ui      ] [ssh:notty   ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:39:41,000000+00:00]
+[6] [30880] [    ] [ui      ] [ssh:notty   ] [147.230.0.217       ] [147.230.0.217  ] [2023-09-20T06:43:18,000000+00:00]
+[6] [33067] [    ] [ui      ] [ssh:notty   ] [147.230.11.147      ] [147.230.11.147 ] [2023-09-20T08:36:00,000000+00:00]
+[6] [181445] [    ] [ui      ] [ssh:notty   ] [147.230.21.106      ] [147.230.21.106 ] [2023-09-27T06:14:39,000000+00:00]
+[6] [181481] [    ] [ui      ] [ssh:notty   ] [147.230.21.106      ] [147.230.21.106 ] [2023-09-27T06:21:00,000000+00:00]
+[6] [181493] [    ] [ui      ] [ssh:notty   ] [147.230.21.30       ] [147.230.21.30  ] [2023-09-27T06:22:55,000000+00:00]
+[6] [181515] [    ] [ui      ] [ssh:notty   ] [147.230.21.106      ] [147.230.21.106 ] [2023-09-27T06:26:52,000000+00:00]
+[6] [182300] [    ] [ui      ] [ssh:notty   ] [147.230.21.113      ] [147.230.21.113 ] [2023-09-27T07:12:19,000000+00:00]
+[6] [182312] [    ] [ui      ] [ssh:notty   ] [147.230.21.106      ] [147.230.21.106 ] [2023-09-27T07:13:02,000000+00:00]
+[6] [182365] [    ] [ui      ] [ssh:notty   ] [147.230.21.106      ] [147.230.21.106 ] [2023-09-27T07:15:50,000000+00:00]
+[6] [182623] [    ] [ui      ] [ssh:notty   ] [147.230.21.106      ] [147.230.21.106 ] [2023-09-27T07:32:15,000000+00:00]
+[6] [182639] [    ] [ui      ] [ssh:notty   ] [147.230.21.106      ] [147.230.21.106 ] [2023-09-27T07:34:10,000000+00:00]
+[6] [182645] [    ] [ui      ] [ssh:notty   ] [147.230.21.113      ] [147.230.21.113 ] [2023-09-27T07:35:14,000000+00:00]
+
+Poslední úspěšné připojení na uživatele ui proběhlo 20.9. z interní sítě tul, tedy jsem to byl nejspíš já.
+Většina záznamů neúspěšných připojení pocházelo z interní sítě tul.
+ALE
+46.13.157.47 ve [2023-09-28T11:26:07,000000+00:00] - Česká republika, Praha/Liberec/Doksy (T-Mobile)
+46.13.116.140 ve [2023-10-01T11:38:55,000000+00:00] - Česká republika, Praha/Benátky nad Jizerou/Mala Bystrice/Horovice (T-Mobile)
+189.167.34.17 ve [2023-10-02T17:59:49,000000+00:00] - Mexico, "Svobodný a suverénní stát" Tlaxcala (UNINET)
+nepochází z tul. 46.13.157.47 má narozdíl od ostatních více pokusu, dá se tedy předpokládat, že se jedná o jednoho z mých kolegů,
+který si nezapnul VPN/nepouštěl skript z jeho přiděleného serveru.
+
+4.
+tommym02n@balin:~$ sudo ufw status
+Status: inactive
+#kontrola stavu firewallu, přeskočil jsem instalaci přes package manager
+
+tommym02n@balin:~$ sudo ufw logging on
+Logging enabled
+#spuštění logování
+
+tommym02n@balin:~$ sudo ufw allow ssh
+Rules updated
+Rules updated (v6)
+#přidání pravidel pro povolení ssh
+
+tommym02n@balin:~$ sudo ufw enable
+Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
+Firewall is active and enabled on system startup
+#velice nepříjemná situace, kdy si můžu sestřelit ssh zapnutím firewallu
+
+tommym02n@balin:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW       Anywhere
+22/tcp (v6)                ALLOW       Anywhere (v6)
+
+#Dobrý, funguje to dobře.

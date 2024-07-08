@@ -1,0 +1,39 @@
+#nfs-kernel-server
+sudo apt install nfs-kernel-server
+
+sudo mkdir /srv/nfs
+sudo chmod 755 /srv/nfs
+sudo touch /srv/nfs/ExtraSuperFile.txt
+sudo chown nobody:nogroup /srv/nfs
+
+#v /etc/exports jsem přidal řádek
+/srv/nfs        147.230.21.0/24(ro,sync,no_subtree_check)
+#v ufw povolil stejné porty pro nfs
+sudo ufw allow from 147.230.21.0/24 to any port nfs
+exportfs -a
+
+showmount -e
+ Export list for balin.nti.tul.cz:
+ /srv/nfs 147.230.21.0/24
+
+sudo mount -t nfs perun.nti.tul.cz:/srv/nfs /home/tommym02n/perun/ 
+
+tommym02n@balin:~$ ls -l /home/tommym02n/perun
+total 4
+-rw-r--r-- 1 nobody nogroup 900 Oct 18 05:40 zvire.txt    #byl tam hlemýžď
+
+
+#kolegům na serverech dori a nori jsem vytvořil účty a v sudoers jsem jim dal práva mountit a umountit
+#samozřejmě pouze v interní síti liane
+tommym02n@balin:~$ sudo adduser dori
+tommym02n@balin:~$ sudo passwd -e dori
+passwd: password expiry information changed.
+
+nori    147.230.21.0/24=(ALL) NOPASSWD: /usr/bin/mount, /usr/bin/umount
+dori    147.230.21.0/24=(ALL) NOPASSWD: /usr/bin/mount, /usr/bin/umount
+
+#u kolegy @dori
+sudo mount -t nfs balin.nti.tul.cz:/srv/nfs /home/balin/share 
+balin@dori:~$ ls -l /home/balin/share
+total 0
+-rw-r--r-- 1 nobody nogroup 0 Oct 18 07:19 ExtraSuperFile.txt #nic tam není, složka je read only
