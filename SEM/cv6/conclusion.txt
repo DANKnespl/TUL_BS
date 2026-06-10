@@ -1,0 +1,19 @@
+1) Datasety
+    data0.mat - testovací dataset
+    data1.mat - malý dataset
+    data2.mat - větší dataset
+    data3.mat - data2 + šum
+
+    data0 - lagrange a spline mají stejné grafy.
+
+    data1 dle mne nejlépe interpoloval pchip, následovala makina, linear, spline a poslední byl lagrange
+    
+    Pro data2 a data3 platí, že metody linear, pchip a makina
+    interpolují velmi podobně.
+    
+    Metoda spline se od nich nejvíce liší v části "volného pádu".
+    S největší pravděpodobností je to z důvodu nutnosti spojitosti
+    druhé derivace interpolované funkce.
+
+2) Metody
+    

@@ -1,0 +1,22 @@
+Při hledání závislosti nákladů na věku,
+lze pozorovat tři skupiny.
+
+skupina s nízkými náklady - exkluzivně nekuřáci
+skupina se středními náklady - kuřáci i nekuřáci
+skupina s vysokými náklady - exkluzivně kuřáci
+
+Kuřáci platí přibližně 305 USD(?) za každý rok života
+s příplatkem asi 22000 USD oproti nekuřákům, kteří
+platí přibližně 267 USD za každý rok života.
+
+Bodové grafy jsou podobné pro různé počty dětí,
+lze tedy předpokládat, že děti nemají významný vliv na
+náklady. 
+
+
+Při analýze závislosti nákladů na BMI,
+nevznikají podobné skupiny jako u závislosti na věku
+a počet dětí opět némá významný vliv na náklady.
+
+Kuřáci platí průměrně 1473 USD za každý bod BMI.
+Nekuřáci za každý bod BMI platí pouhých 83 USD.
