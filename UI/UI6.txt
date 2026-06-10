@@ -1,0 +1,145 @@
+sudo apt install nginx
+sudo systemctl start nginx
+mkdir /home/tommym02n/public_html
+chown -R $USER:$USER /home/tommym02n/public_html/
+
+
+
+Nastavte, aby se při najetí na adresu serveru se zobrazil vybraný adresář (třeba /var/www/html/), při najetí na adresu server/~uživatel se zobrazil adresář ~/public_html
+#nejsem si jistý, jesti jste nechtěla také zapnout "autoindex on" při najetí na server,
+#pokud ano v /etc/nginx/sites-available/default do části "location /" je nutn přidat "autoindex on" a
+#zakomentovat různé indexy: "index index.html index.htm index.nginx-debian.html;" v server části
+
+#redirect jsem řešil přes symbolický link na složku
+sudo ln -s /home/tommym02n/public_html /var/www/~tommym02n
+sudo chmod -R 755 /var/www/~tommym02n
+
+
+
+Nastavte dostupné statistiky (ale ne pro každého, vybraných jiných počítačů - třeba vašeho desktopu, ze kterého server spravujete) a zkontrolujte
+#nic neříkající statistiky nginx později společně s listováním
+#mimo základní statistiky běží na portu 9090 Prometheus, kterým mám přístup k dalším statistikám
+#k instalaci jsem využil tento tutorial https://antonputra.com/monitoring/monitor-nginx-with-prometheus/#install-prometheus
+
+#####NginxExporter
+sudo mkdir /opt/nginx-exporter
+cd /opt/nginx-exporter
+sudo useradd --system --no-create-home --shell /bin/false nginx-exporter
+curl -L https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v0.11.0/nginx-prometheus-exporter_0.11.0_linux_amd64.tar.gz -o nginx-prometheus-exporter_0.11.0_linux_amd64.tar.gz
+tar -zxf nginx-prometheus-exporter_0.11.0_linux_amd64.tar.gz
+rm nginx-prometheus-exporter_0.11.0_linux_amd64.tar.gz
+chown -R nginx-exporter:nginx-exporter /opt/nginx-exporter
+nano /etc/systemd/system/nginx-exporter.service
+
+#upravil jsem service
+[Unit]
+Description=Nginx Exporter
+Wants=network-online.target
+After=network-online.target
+
+StartLimitIntervalSec=0
+
+[Service]
+User=nginx-exporter
+Group=nginx-exporter
+Type=simple
+Restart=on-failure
+RestartSec=5s
+
+ExecStart=/opt/nginx-exporter/nginx-prometheus-exporter \
+    -nginx.scrape-uri=http://localhost:8080/nginx_status
+
+[Install]
+WantedBy=multi-user.target
+
+
+systemctl enable nginx-exporter
+systemctl start nginx-exporter
+systemctl status nginx-exporter
+#nějákou dobu nefungoval, nejspíš tam byl problém s nepochopením úlohy s listováním
+
+####Prometheus
+sudo useradd --system --no-create-home --shell /bin/false prometheus
+curl -L https://github.com/prometheus/prometheus/releases/download/v2.41.0/prometheus-2.41.0.linux-amd64.tar.gz -o prometheus-2.41.0.linux-amd64.tar.gz
+tar -xvf prometheus-2.41.0.linux-amd64.tar.gz
+mkdir -p /data /etc/prometheus
+cd prometheus-2.41.0.linux-amd64
+mv prometheus promtool /usr/local/bin/
+mv consoles/ console_libraries/ /etc/prometheus/
+mv prometheus.yml /etc/prometheus/prometheus.yml
+chown -R prometheus:prometheus /etc/prometheus/ /data/
+nano /etc/systemd/system/prometheus.service
+
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+StartLimitIntervalSec=0
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/local/bin/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/data \
+  --web.console.templates=/etc/prometheus/consoles \
+  --web.console.libraries=/etc/prometheus/console_libraries \
+  --web.listen-address=0.0.0.0:9090 \
+  --web.enable-lifecycle
+
+[Install]
+WantedBy=multi-user.target
+
+nano /etc/prometheus/prometheus.yml
+
+#v configu jsem změnil:
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "nginx-prometheus-exporter"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9113"]
+
+systemctl enable prometheus
+systemctl start prometheus
+systemctl status prometheus
+
+
+v ufw povolil port 9090 pro liane
+sudo ufw allow from 147.230.0.0/16 to any port 9090
+
+
+Dodejte statický obsah (příklad html + css)
+#předal jsem přes sambu, jelikož jsem líný si řešit Windows Client pro nfs
+#a následně přesunul pomocí mv
+
+Zakažte listování adresáři - ukažte, že se nemůžu podívat do adresáře s obrázky, ale na stránce jsou normálně zobrazené.
+#V nginx je toto implicitní nastavení, ale po druhé úloze zde máte i explicitní zápis
+#Navíc jsem na tomto bodu trávil několik hodin, jelikož jsem špatně pochopil zadání a myslel si,
+# že se nesmí uživatel podívat na soubory, pokud zná celou cestu, ale mají se vykreslit ve stránce
+
+
+
+
+# /etc/nginx/sites-available/default přidané nastavení:
+location /~tommym02n/Media/ {
+     autoindex off; #explicitní zápis zamezení procházení soubory
+}
+
+location /nginx_status {
+     stub_status; #výpis statistik
+}
+
+
+http://balin.nti.tul.cz/ - odkaz na server
+http://balin.nti.tul.cz/~tommym02n/ - uživatelské stránky
+http://balin.nti.tul.cz/nginx_status - základní nginx statistiky - dostupné všem
+balin.nti.tul.cz:9090/ - statistiky přes Prometheus - dostupné z liane
+http://balin.nti.tul.cz/~tommym02n/Media - adresář s obrázky

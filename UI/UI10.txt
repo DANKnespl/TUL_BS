@@ -1,0 +1,114 @@
+sudo apt install postfix - instalace postfix package
+sudo apt install mailutils - instalace mailx package
+sudo apt install telnet - instalace telnet package
+sudo apt install cron - instalace cron package
+
+sudo dpkg-reconfigure postfix - konfigurace posfixu
+sudo nano /etc/postfix/main.cf - také konfigurace postfixu
+   ...
+   smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+   myhostname = balin.nti.tul.cz
+   alias_maps = hash:/etc/aliases
+   alias_database = hash:/etc/aliases
+   myorigin = /etc/mailname
+   mydestination = balin.nti.tul.cz  # nutné pro posílání lokálních mailů
+   relayhost =
+   mailbox_size_limit = 10000000000 #implicitně nebylo nastaveno vůbec, zadal jsem arbitrární velikost
+   recipient_delimiter =
+   inet_interfaces = all
+   default_transport = smtp
+   relay_transport = smtp
+   inet_protocols = all
+
+systemctl reload postfix
+
+chown tommym02n /var/mail/tommym02n #uživatel nevlastnil mailovou složku a byly s tím problémy
+
+První testovací maily:
+echo "Body" | mailx -s "SUBJECT" "root@tul.cz"		#původně nekonkluzivní testování lokálu, později konkluzivní testování odchozí pošty
+echo "KYS" | mailx -s ":|" "daniel.knespl@tul.cz"	#konkluzivní testování odchozí pošty
+
+Pozdější testovací mail:
+echo "plswork" | mailx -s "plswork" root@balin.nti.tul.cz
+
+#Při řešení důvodu PROČ mi nechodí maily, mi bylo doporučeno (kolegou Svobodným), že to je možná tím, že uživatelé nejsou ve skupině mail. Je možné, že to nutné není.
+sudo usermod -a -G mail tommym02n
+sudo usermod -a -G mail root
+
+
+
+
+root@balin:~# mailx
+"/var/mail/root": 1 message 1 new
+>N   1 tommym02n@balin.nt Tue Nov 28 11:07  14/448   plswork
+? 1
+   Return-Path: <tommym02n@balin.nti.tul.cz>
+   X-Original-To: root@balin.nti.tul.cz
+   Delivered-To: root@balin.nti.tul.cz
+   Received: by balin.nti.tul.cz (Postfix, from userid 1001)
+           id 51620231FE; Tue, 28 Nov 2023 11:07:46 +0000 (UTC)
+   Subject: plswork
+   To: <root@balin.nti.tul.cz>
+   User-Agent: mail (GNU Mailutils 3.14)
+   Date: Tue, 28 Nov 2023 11:07:46 +0000
+   Message-Id: <20231128110746.51620231FE@balin.nti.tul.cz>
+   From: tommym02n@balin.nti.tul.cz
+
+   plswork
+
+#Po několika minutách čtení logů,
+#Jdou konečně odesílat lokální maily
+
+
+root@balin:~# telnet localhost 25
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 balin.nti.tul.cz ESMTP Postfix (Ubuntu)
+^]
+telnet> q
+Connection closed.
+
+#Lze se připojit přes telnet
+
+59 23 * * * bash meil.sh #odesílání půlnočních mailů
+cat meil.sh
+   #!/bin/bash  
+   > /root/pain.txt #přemazání souboru, jehož obsah je následně odeslán jako tělo mailu
+
+   utmpdump /var/log/wtmp | grep $(date +%Y-%m-%d) | grep -v 0.0.0.0 | cut -d "]" -f4 | cut -d "[" -f2 | sort | uniq -c >> /root/pain.txt 2>&1
+   #ošklivá separace přihlášení a přesměrování do souboru
+   mailx -s "balin.nti.tul.cz - daily login report" "daniel.knespl@tul.cz" < /root/pain.txt # posílání mailu se vstupem ze souboru
+
+
+#stažený mail
+Return-Path: <SRS0+Npfz=HE=balin.nti.tul.cz=root@tul.cz>
+X-Original-To: daniel.knespl@tul.cz
+Delivered-To: daniel.knespl@tul.cz
+Received: from bubo.tul.cz (bubo.tul.cz [147.230.16.1])
+	by mbox.tul.cz (Postfix) with ESMTP id CE1F9C120347
+	for <daniel.knespl@tul.cz>; Fri, 24 Nov 2023 00:59:03 +0100 (CET)
+X-Virus-Scanned: amavisd-new at tul.cz
+X-Spam-Flag: NO
+X-Spam-Score: -1.907
+X-Spam-Level:
+X-Spam-Status: No, score=-1.907 required=6.31 tests=[BAYES_00=-1.9,
+	SPF_HELO_NONE=0.001, SPF_NONE=0.001, T_SCC_BODY_TEXT_LINE=-0.01,
+	URIBL_BLOCKED=0.001] autolearn=ham autolearn_force=no
+Received: from balin.nti.tul.cz (balin.nti.tul.cz [147.230.21.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by bubo.tul.cz (Postfix) with ESMTPS id A256918050DE4
+	for <daniel.knespl@tul.cz>; Fri, 24 Nov 2023 00:59:02 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 bubo.tul.cz A256918050DE4
+Received: by balin.nti.tul.cz (Postfix, from userid 0)
+	id 6928E239FA; Thu, 23 Nov 2023 23:59:02 +0000 (UTC)
+Subject: balin.nti.tul.cz - daily login report
+To: <daniel.knespl@tul.cz>
+User-Agent: mail (GNU Mailutils 3.14)
+Date: Thu, 23 Nov 2023 23:59:02 +0000
+Message-Id: <20231123235902.6928E239FA@balin.nti.tul.cz>
+From: root <root@balin.nti.tul.cz>
+
+      3 root    
+      2 tommym02n

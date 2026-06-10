@@ -1,0 +1,25 @@
+sudo apt install nginx-extras
+nano /etc/nginx/sites-available/default
+   location /webDAV {
+       dav_methods PUT DELETE MKCOL COPY MOVE;
+       dav_ext_methods PROPFIND OPTIONS;
+       dav_access user:rw group:rw all:rw;
+
+       client_max_body_size 0;
+       create_full_put_path on;
+       client_body_temp_path /tmp/;
+
+       auth_pam "Restricted";
+       auth_pam_service_name "common-auth";
+   }
+sudo nginx -t && sudo nginx -s reload
+---- èást psaná do souboru pøes webDAV ----
+Pro pøipojení k webDAV serveru jsem využil klientù Kyberkachna(Cyberduck) a WinSCP
+Zpùsob tvorby pøipojení byl u obou klientù stejný.
+1. Specifikovat, že se jedná o webDAV pøipojení
+2. Vyplnit adresu serveru a pøihlašovací údaje nìjákého uživatele
+3. V rozšíøeném nastavení se pøesunout do složky /webDAV
+
+Práce v obou klientech byla intuitivní a nebyla pøíliš odlišná od Exploreru ve windows.
+
+Instalace nastavení i práce s owncloudem jsou jednoduché.

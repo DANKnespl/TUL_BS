@@ -1,0 +1,164 @@
+sudo apt install fail2ban #instalace fail2ban package
+sudo apt install rsyslog #instalace rsyslog package
+
+sudo systemctl enable fail2ban #povolení fail2ban
+sudo systemctl start fail2ban #spuštění fail2ban
+
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local #tvorba kopie konfiguračního souboru
+
+sudo nano /etc/fail2ban/jail.local #editace kopie konfiguračního souboru
+	ignoreip = 147.230.0.0/16 #ignorování pravidel ze sítě liane
+	banaction = ufw           #nastavení, jaká fw má řešit bany
+	
+	#v sshd části jsem přidal
+	enabled   = true 	#povolení banování přes sshd
+	maxretry  = 3		#tři pokusy a pak ban
+	findtime  = 1d		#období tří pokusů (1 den)
+	bantime   = 2d		#doba banu (2 dny)
+
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/default.local #tvorba kopie konfiguračního souboru s defaultním nastavením
+sudo cp /etc/fail2ban/jail.local /etc/fail2ban/jail.conf #přepsání konfiguračního souboru mou konfigurací
+sudo systemctl restart fail2ban
+
+
+tommym02n@balin:~$ sudo fail2ban-client get sshd bantime
+172800							#48hodin v sekundách
+tommym02n@balin:~$ sudo fail2ban-client status sshd
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/auth.log
+`- Actions
+   |- Currently banned: 1
+   |- Total banned:     1
+   `- Banned IP list:   36.110.228.254			#první ban
+
+Mno, v btmp se stále hromadí +- stejné množství nepřipojení. Avšak ufw status se rozrůstá každým dnem o nové IP adresy.
+Tedy vše odpovídá mým předpokladům.
+
+tommym02n@balin:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+Anywhere                   REJECT      42.192.40.59
+Anywhere                   REJECT      49.232.26.35
+Anywhere                   REJECT      1.117.173.154
+Anywhere                   REJECT      134.175.218.176
+Anywhere                   REJECT      102.128.78.42
+Anywhere                   REJECT      137.184.201.161
+Anywhere                   REJECT      68.183.85.57
+Anywhere                   REJECT      43.156.228.30
+Anywhere                   REJECT      112.217.225.59
+Anywhere                   REJECT      172.245.210.242
+Anywhere                   REJECT      43.128.111.247
+Anywhere                   REJECT      87.27.205.141
+Anywhere                   REJECT      162.241.71.115
+Anywhere                   REJECT      185.106.135.34
+Anywhere                   REJECT      43.136.110.213
+....
+Anywhere                   REJECT      51.83.72.156
+Anywhere                   REJECT      61.177.172.185
+Anywhere                   REJECT      218.92.0.31
+22/tcp                     ALLOW       Anywhere
+20                         ALLOW       147.230.0.0/16
+21                         ALLOW       147.230.0.0/16
+22/tcp (v6)                ALLOW       Anywhere (v6)
+
+
+
+
+
+sudo apt install proftpd - instalace rsyslog package
+nano /etc/proftpd/proftpd.conf	#úprava konfigurace
+	<Global>
+	RootLogin off
+	RequireValidShell off
+	</Global>		#zamezení loginu na root
+	
+	#odkomentoval jsem ###Anonymous share### část a nastavil složku na /var/ftp/pub
+tommym02n@balin:~$ sudo mkdir /var/ftp
+tommym02n@balin:~$ sudo mkdir /var/ftp/pub
+tommym02n@balin:~$ sudo chmod 1777 /var/ftp/pub
+tommym02n@balin:~$ sudo chmod 1777 /var/ftp		#vytvořil jsem složku a nastavil práva
+tommym02n@balin:~$ sudo touch /var/ftp/pub/balin	#vytvořil jsem soubor balin
+tommym02n@balin:~$ service proftpd restart		#restart serveru, aby měl aktuální konfiguraci
+sudo ufw allow from 147.230.0.0/16 to any port 20
+sudo ufw allow from 147.230.0.0/16 to any port 21	#povolení portů ve fw
+
+tommym02n@balin:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+Anywhere                   REJECT      191.9.123.39
+Anywhere                   REJECT      111.95.141.34
+Anywhere                   REJECT      218.92.0.29
+Anywhere                   REJECT      218.92.0.34
+Anywhere                   REJECT      218.92.0.22
+Anywhere                   REJECT      106.53.145.176
+Anywhere                   REJECT      14.29.182.201
+Anywhere                   REJECT      218.92.0.108
+Anywhere                   REJECT      117.34.125.98
+Anywhere                   REJECT      61.177.172.179
+Anywhere                   REJECT      218.92.0.24
+Anywhere                   REJECT      218.92.0.25
+Anywhere                   REJECT      180.101.88.247
+Anywhere                   REJECT      218.92.0.113
+Anywhere                   REJECT      218.92.0.112
+Anywhere                   REJECT      218.92.0.56
+Anywhere                   REJECT      218.92.0.118
+22/tcp                     ALLOW       Anywhere
+20                         ALLOW       147.230.0.0/16
+21                         ALLOW       147.230.0.0/16
+22/tcp (v6)                ALLOW       Anywhere (v6)
+
+
+
+
+
+
+PS C:\Users\Tommy> ftp
+ftp> open balin.nti.tul.cz
+Connected to balin.nti.tul.cz.
+220 ProFTPD Server (Debian) [::ffff:147.230.21.107]
+User (balin.nti.tul.cz:(none)): tommym02n
+331 Password required for tommym02n
+Password:
+230 User tommym02n logged in
+ftp> ls
+200 PORT command successful
+150 Opening ASCII mode data connection for file list
+servers.txt
+PepegaFinder.sh
+226 Transfer complete
+ftp: 33 bytes received in 0.00Seconds 33.00Kbytes/sec.
+ftp> put
+Local file C:\pain.txt
+Remote file pain.txt
+200 PORT command successful
+150 Opening ASCII mode data connection for pain.txt
+226 Transfer complete
+ftp: 575 bytes sent in 0.02Seconds 35.94Kbytes/sec.
+ftp> ls
+200 PORT command successful
+150 Opening ASCII mode data connection for file list
+pain.txt
+servers.txt
+PepegaFinder.sh
+
+Problémy:
+Nelze využívat příkazy(např. ls) při připojení přes FTP.
+  Řešení: Povolit si FTP v klientském FW.
+
+
+
+
+
+
+
+
+
+
+

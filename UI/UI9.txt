@@ -1,0 +1,61 @@
+instalace klienta LEncrypt
+   sudo apt install certbot
+   sudo apt install python3-certbot-nginx
+
+   v /etc/nginx/sites-available/default
+   změna  server_name _; na
+   server_name balin.nti.tul.cz; #nejspíš nebylo potřeba
+   sudo nginx -t && nginx -s reload
+
+   
+   získání certifikátu
+	sudo certbot --nginx -d balin.nti.tul.cz
+	#přečtení ToS
+	#automaticky se upravil /etc/nginx/sites-available/default
+	sudo nginx -t && nginx -s reload
+
+
+   sudo ufw allow 443
+   
+   #https://balin.nti.tul.cz/
+   https://balin.nti.tul.cz/~tommym02n/
+
+Firewall
+   prvních 230 záznamů jsou blokované IP snažící se připojit přes ssh
+   [ 1] Anywhere                   REJECT IN   46.101.230.11
+   ...
+   [233] Anywhere                   REJECT IN   5.128.36.44
+   [234] Anywhere                   REJECT IN   139.198.9.32
+   [235] Anywhere                   REJECT IN   89.253.219.239
+   [236] 22/tcp                     ALLOW IN    Anywhere 	   #svět - ssh, co se bezpečnosti týče, měl bych omezit, ale chci se připojovat odkudokliv bez VPN,
+   [237] 20                         ALLOW IN    147.230.0.0/16     #celá tul síť - ftp
+   [238] 21                         ALLOW IN    147.230.0.0/16	   #celá tul síť - ftp, pro přenos dat jsem již v pořádku s přihlašováním se přes VPN. Max 65534 počítačů, kterým dovoluji přenos dat 
+   [239] Samba                      ALLOW IN    147.230.0.0/16     #celá tul síť - smb, pro přenos dat jsem již v pořádku s přihlašováním se přes VPN. Max 65534 počítačů, kterým dovoluji přenos dat  
+   [240] 2049                       ALLOW IN    147.230.21.0/24    #UI servery - nfs,  pro přenos dat jsem již v pořádku s přihlašováním se přes VPN. Pro mountování ale nechci riskovat více (reálně však nikdo, kromě dori a nori nemá právo mountovat). Max 254 počítačů, kterým dovoluji přenos dat   
+   [241] Nginx HTTP                 ALLOW IN    Anywhere 	   #svět - jsou to webovky a já chci svoje webovky vidět bez VPN
+   [242] 9113                       DENY IN     Anywhere 	   #blokuje svět - prometheus-exporter - scraper, využívá tento port. Jsou zde vidět statistiky serveru.
+   [243] 9090                       ALLOW IN    147.230.0.0/16     #celá tul síť - prometheus. Jsou zde vidět statistiky serveru *s grafy*, využívá prometheus-exporter
+   [244] 80                         ALLOW IN    Anywhere 	   #svět - jsou to webovky a já chci svoje webovky vidět bez VPN
+   [245] 443                        ALLOW IN    Anywhere 	   #svět - jsou to webovky a já chci svoje webovky vidět bez VPN
+   [246] 22/tcp (v6)                ALLOW IN    Anywhere (v6)	   #svět - ssh, co se bezpečnosti týče, měl bych omezit, ale chci se připojovat odkudokliv bez VPN
+   [247] Nginx HTTP (v6)            ALLOW IN    Anywhere (v6)	   #svět - jsou to webovky a já chci svoje webovky vidět bez VPN
+   [248] 443 (v6)                   ALLOW IN    Anywhere (v6)	   #svět - jsou to webovky a já chci svoje webovky vidět bez VPN
+
+ftp, samba, nfs, www
+   /var/ftp/pub/ 777   #sjednotit s /srv/ftp, nejspíš v /srv pro jednotný přenos souborů v /srv/
+	balin.txt 644
+   /var/www/ 755 #implicitní složka, nemám s tím problém
+	html/ 755
+	   fakt.php 744
+	   index.nginx-debian.html 644
+	   info.php 644
+	   '~tommym02n' -> /home/tommym02n/public_html/
+   /srv/ftp/ 750
+	welcome.msg 644
+   /srv/nfs/ 755
+	ExtraSuperFile.txt 644
+   /srv/samba/ 755
+	share/ 777
+#Celkově jsem se složkami spokojen
+
+

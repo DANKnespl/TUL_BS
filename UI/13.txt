@@ -1,0 +1,23 @@
+První Hardening index byl 66
+Po odstranění Dockeru a restartu služeb byl 65 (:
+Po instalaci clamav package(malware scanner) byl zpět 66
+Po apt autoremove, apt upgrade, a změně /etc/ssh/sshd_config byl 69 nice
+LogLevel VERBOSE
+MaxAuthTries 3
+MaxSessions 2
+Po dalších změnách v /etc/ssh/sshd_config byl 70
+AllowTcpForwarding no
+ClientAliveCountMax 2
+
+ Disable the 'VRFY' command [MAIL-8820:disable_vrfy_command]
+    - Details  : disable_vrfy_command=no
+    - Solution : run postconf -e disable_vrfy_command=yes to change the value
+      https://cisofy.com/lynis/controls/MAIL-8820/
+
+Pořád 70
+reboot + změna práv login.defs na 027 => 72 (ale hlavně ten reboot to byl)
+instalace apt-listchanges a  libpam-tmpdir => 72
+Po dalších změnách v /etc/ssh/sshd_config => 75
+AllowAgentForwarding no
+TCPKeepAlive no
+Compression no
