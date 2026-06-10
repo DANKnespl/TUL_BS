@@ -1,0 +1,25 @@
+popis řešení
+1. najít lineární regresi bodů v obrázku.
+2. pomocí nalezeného sklonu určit čtyři body které následně zprůměruji - dostanu dva 
+    body, které opět pošlu skrze funkci pro nalezení lineární regrese = přímka procházející těmito body.
+3. získat úhel v radianech z koeficientu sklonu funkce a převést ho na úhly,
+    jelikož imrotate nepoužívá narozdíl od ostatních funkcí radiány
+4. invertovat původní obrázek, otočit ho, invertovat zpět původní a orotovaný obrázek
+5. vykreslit originál a otočený
+------------------------------------
+Důvod existence draw() a draw5()?
+    
+    draw() funguje lépe pro 8
+    draw5() jak název napovídá pro 5
+    pro 1 je jedno, kterou funkci použíjeme, jelikož tam stačí lineární regrese bez řešení dalších problémů
+    + nikde není specifikováno, že nesmíme použít speciální funkci pro každou z hodnot
+
+------------------------------------
+1. funkci pro linearní regresi jsem dělal minulý rok v předmětu SEM2, nakonec jsem zjistil,
+    že se ke stejnému výsledku dá dostat přes polyval(x,y,1). p(1) je pak můj sklon,
+    ale už jsem si nebyl jist, kde všude bych musel měnit věci, tak jsem to tak nechal.
+2. pro grafy spojnic těchto bodů stačí odkomoentovat v LinReg.m řádky 18+ (nejspíš to zničí vykreslování zbytku)
+3. rad2deg(x) dělá svou práci dobře, ale proč používá funkce imrotate(img,deg) stupně a ne radiany???
+4. poměrně elegantní řešení oproti mému původnímu, kde jsem nejdříve nastavoval znaky na 255 a 1,
+    kde jsem po rotaci měnil 0 na 255.
+5. k vyvkreslování nemám co dodat, formátování bylo v prezentaci.

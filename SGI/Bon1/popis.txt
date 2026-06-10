@@ -1,0 +1,23 @@
+skript po načtení daného souboru funguje ve dvou fázích
+    1.hrubé nalezení
+    2.přibližování se ke sktučnosti
+
+Ale před nimi je nutno upravit signál.
+Nejdříve si zjistím průměrnou hodnotu signálu a o tu celý signál posunu po ose y.
+Nyní můžeme přemýšlet o využítí absolutních hodnot.
+Po puštění funkce abs() na hodnoty signálu můžeme zjistit průměrnou hodnotu tohoto signálu.
+Ta je použita jako hodnota, pod kterou můj skript neslyší - jeho největší problém.
+
+Hrubé nalezení tedy spočívá v porovnání medianové hodnoty intervalu vzorků
+a průměrné hodnoty absolutního signálu (dále PHAS).
+
+Přiblížení pak funguje s porovnáním maximálních hodnot menších intervalů 
+a PHAS.
+
+Proč jsem nešel prozkoumávát pod hranici PHAS?
+    1. Nezbývalo mi moc času
+    2. c6_p0076_s04.wav by byl nepříjemným krajním případem -> první bod
+
+Poslední otázka která mě napadá je, proč jsem používal median a ne mean při porovnávání intervalů
+    c3_p0018_s03.wav kolem 0.13 s je tímto důvodem. Byl velice nápomocný při odfiltrování
+    krátkých hlasitých signálů, které by prošli přes mean.
